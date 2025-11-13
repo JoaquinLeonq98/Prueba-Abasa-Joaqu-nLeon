@@ -1,22 +1,58 @@
+---
+import "../styles/global.css";
+import ThemeToggle from "../components/React/ThemeToggle.tsx";
+import ThemeInitializer from "../components/Astro/ThemeInitializer.astro";
+
+interface LayoutProps {
+	title?: string;
+	description?: string;
+	ogImage?: string;
+}
+
+const {
+	title = "Prueba ABASA",
+	description = "Explora nuestro catálogo de productos con filtros y detalles completos.",
+	ogImage = "/favicon.svg",
+} = Astro.props as LayoutProps;
+---
 <!doctype html>
-<html lang="en">
+<html lang="es">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
+		<meta property="og:image" content={ogImage} />
+		<ThemeInitializer />
+		<style>
+			@view-transition {
+				navigation: auto;
+			}
+		</style>
 	</head>
-	<body>
-		<slot />
+	<body class="bg-blue-50 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100">
+		<div class="flex min-h-screen flex-col">
+			<header class="border-b border-slate-200/60 bg-white/80 backdrop-blur supports-backdrop-filter:bg-white/60 dark:border-slate-800/60 dark:bg-slate-900/80">
+				<div class="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+					<a href="/" class="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+						Prueba ABASA
+					</a>
+					<ThemeToggle client:load />
+				</div>
+			</header>
+			<div class="flex-1">
+				<slot />
+			</div>
+			<footer class="border-t border-slate-200/60 bg-white/80 px-4 py-6 text-sm text-slate-500 dark:border-slate-800/60 dark:bg-slate-900/80 dark:text-slate-400">
+				<div class="mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-2 text-center sm:flex-row sm:gap-4">
+					<span>&copy; {new Date().getFullYear()} Prueba ABASA - Joaquín León Quero</span>
+				</div>
+			</footer>
+		</div>
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>

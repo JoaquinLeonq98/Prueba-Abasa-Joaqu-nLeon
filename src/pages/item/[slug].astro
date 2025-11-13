@@ -1,0 +1,58 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ItemDetail from "../../components/Astro/ItemDetail.astro";
+import type { CatalogItem } from "../../lib/api";
+import { fetchItems, fetchItemBySlug } from "../../lib/api";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+	const items = await fetchItems();
+	return items.map((item) => ({
+		params: {
+			slug: String(item.id),
+		},
+		
+		props: {
+			item,
+		},
+	}));
+}
+
+const props = Astro.props as { item?: CatalogItem };
+let item = props.item ?? null;
+
+if (!item && Astro.params.slug) {
+	item = await fetchItemBySlug(Astro.params.slug) ?? null;
+}
+
+const pageTitle = item
+	? `${item.title} | Detalle del producto`
+	: "Producto no encontrado | Detalle del producto";
+const pageDescription = item
+	? `Consulta toda la información de ${item.title}, incluyendo reseñas, precio y características destacadas.`
+	: "No pudimos encontrar el producto solicitado. Regresa al catálogo para seguir explorando opciones.";
+---
+
+<Layout title={pageTitle} description={pageDescription} ogImage={item?.image}>
+	{item ? (
+		<main class="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-12 sm:px-6 lg:px-8">
+			<ItemDetail item={item} />
+		</main>
+	) : (
+		<main class="mx-auto flex w-full max-w-5xl flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200/60 bg-white/90 px-4 py-24 text-center shadow-[0_16px_40px_rgba(52,52,53,0.06)] sm:px-6 lg:px-8 dark:border-slate-700/60 dark:bg-slate-900/80 dark:text-slate-300 dark:shadow-[0_20px_50px_rgba(2,6,23,0.65)]">
+			<h1 class="text-2xl font-semibold text-slate-900 dark:text-slate-100">Producto no encontrado</h1>
+			<p class="max-w-xl text-base text-slate-500 dark:text-slate-300">
+				Puede que el enlace haya caducado o que el producto ya no esté disponible. Vuelve al catálogo y
+				prueba con otro artículo.
+			</p>
+			<a
+				href="/"
+				class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-200 dark:border-slate-700 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:text-white dark:focus-visible:ring-slate-700"
+			>
+				<span aria-hidden="true">←</span> Regresar al catálogo
+			</a>
+		</main>
+	)}
+</Layout>
+

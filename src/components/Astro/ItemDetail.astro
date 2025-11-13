@@ -1,0 +1,71 @@
+---
+import type { CatalogItem } from "../lib/api";
+
+interface ItemDetailProps {
+	item: CatalogItem;
+}
+
+const { item } = Astro.props as ItemDetailProps;
+
+const formatter = new Intl.NumberFormat("es-ES", {
+	style: "currency",
+	currency: "USD",
+});
+---
+
+<article class="grid gap-10 rounded-2xl border border-slate-200/60 bg-white/90 p-8 shadow-[0_16px_40px_rgba(52,52,53,0.06)] backdrop-blur supports-backdrop-filter:bg-white/70 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-start dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_rgba(2,6,23,0.65)]">
+	<div class="flex flex-col gap-4">
+		<a
+			href="/"
+			class="inline-flex items-center gap-2 self-start rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-200 dark:border-slate-700 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:text-white dark:focus-visible:ring-slate-700"
+		>
+			<span aria-hidden="true">←</span> Regresar al catálogo
+		</a>
+		<div class="relative flex aspect-square items-center justify-center rounded-xl border border-slate-200 bg-slate-50 p-10 dark:border-slate-700 dark:bg-slate-900/70">
+			<img src={item.image} alt={`Imagen de ${item.title}`} class="max-h-full max-w-full object-contain" loading="lazy" />
+		</div>
+	</div>
+	<div class="flex flex-col gap-6">
+		<div class="flex flex-col gap-3">
+			<span class="inline-flex items-center gap-1 self-start rounded-full border border-slate-200 bg-slate-100 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300">
+				{item.category}
+			</span>
+			<h1 class="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">{item.title}</h1>
+			<p class="text-lg font-semibold text-slate-900 dark:text-slate-100">
+				{formatter.format(item.price)}
+			</p>
+			<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-300">
+				<div class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 font-semibold text-amber-600 dark:bg-amber-900/20 dark:text-amber-200">
+					<svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+					</svg>
+					{item.rating.rate.toFixed(1)}
+				</div>
+				<span>{item.rating.count > 0 ? `${item.rating.count} en stock` : "Sin datos de stock"}</span>
+			</div>
+		</div>
+
+		<section class="flex flex-col gap-3 text-base text-slate-500 dark:text-slate-300">
+			<h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Descripción</h2>
+			<p>{item.description}</p>
+		</section>
+
+		<section class="grid gap-3 rounded-xl border border-slate-200/60 bg-white/90 p-6 text-sm text-slate-500 shadow-[0_16px_40px_rgba(52,52,53,0.06)] sm:grid-cols-2 dark:border-slate-700/60 dark:bg-slate-900/80 dark:text-slate-300 dark:shadow-[0_20px_50px_rgba(2,6,23,0.65)]">
+			<div class="flex flex-col gap-2">
+				<h3 class="font-semibold text-slate-900 dark:text-slate-100">Ventajas</h3>
+				<ul class="mt-2 space-y-2">
+					<li>Envío estándar incluido</li>
+					<li>Garantía de satisfacción</li>
+				</ul>
+			</div>
+			<div class="flex flex-col gap-2">
+				<h3 class="font-semibold text-slate-900 dark:text-slate-100">Soporte</h3>
+				<ul class="mt-2 space-y-2">
+					<li>Atención 24/7</li>
+					<li>Asesoría personalizada</li>
+				</ul>
+			</div>
+		</section>
+	</div>
+</article>
+
